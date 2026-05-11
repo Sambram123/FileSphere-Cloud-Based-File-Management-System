@@ -1,4 +1,4 @@
-# Notes App (React + Firebase + Cloudinary)
+# FileSphere (React + Firebase + Cloudinary)
 
 [![React](https://img.shields.io/badge/React-18-blue?style=for-the-badge&logo=react)](https://reactjs.org/)
 [![Firebase](https://img.shields.io/badge/Firebase-v9-orange?style=for-the-badge&logo=firebase)](https://firebase.google.com/)
