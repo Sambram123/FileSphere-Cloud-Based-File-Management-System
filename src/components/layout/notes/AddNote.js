@@ -175,8 +175,8 @@ const AddNote = (props) => {
     <Card
       variant="outlined"
       sx={{
-        maxWidth: 400,
-        minWidth: 200,
+        width: '100%',
+        maxWidth: 520,
         margin: '0 auto',
         borderRadius: '20px',
         marginBottom: '30px',

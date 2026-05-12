@@ -256,7 +256,12 @@ const Note = (props) => {
       />
       <Card
         variant="outlined"
-        sx={{ width: 280, borderRadius: '20px', marginBottom: '10px' }}
+        sx={{
+          width: { xs: '100%', sm: 280 },
+          maxWidth: { xs: '100%', sm: 280 },
+          borderRadius: '20px',
+          marginBottom: '10px',
+        }}
       >
         <CardHeader
           title={

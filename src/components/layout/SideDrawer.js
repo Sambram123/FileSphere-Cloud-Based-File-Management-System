@@ -11,31 +11,64 @@ import {
   ListItemIcon,
   ListItemText,
   Tooltip,
+  useMediaQuery,
 } from '@mui/material';
 import { useState } from 'react';
 import { Drawer, DrawerHeader } from '../../shared/ui-themes';
 import { pageArray } from '../../shared/utils';
+import { useTheme } from '@emotion/react';
+import { useDataLayerValue } from '../../context-api/Datalayer';
+import { actionTypes } from '../../context-api/reducer';
 
 const SideDrawer = (props) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const theme = useTheme();
+  const isPhone = useMediaQuery(theme.breakpoints.down('sm'));
+  const [, dispatch] = useDataLayerValue();
+
+  const closeDrawer = () => {
+    if (!isPhone) return;
+    dispatch({
+      type: actionTypes.SET_DRAWER,
+      isOpen: false,
+    });
+  };
 
   const getNotes = (event, index) => {
     setSelectedIndex(index);
     props.getNotes();
+    closeDrawer();
   };
 
   const getArchived = (event, index) => {
     setSelectedIndex(index);
     props.getArchived();
+    closeDrawer();
   };
 
   const getTrashed = (event, index) => {
     setSelectedIndex(index);
     props.getTrashed();
+    closeDrawer();
   };
 
   return (
-    <Drawer variant="permanent" open={props.isOpen}>
+    <Drawer
+      variant={isPhone ? 'temporary' : 'permanent'}
+      open={props.isOpen}
+      onClose={closeDrawer}
+      ModalProps={isPhone ? { keepMounted: true } : undefined}
+      sx={
+        isPhone
+          ? {
+              '& .MuiDrawer-paper': {
+                width: 280,
+                maxWidth: '85vw',
+              },
+            }
+          : undefined
+      }
+    >
       <DrawerHeader />
       <Divider />
       <List>

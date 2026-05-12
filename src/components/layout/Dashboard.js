@@ -159,7 +159,7 @@ const Dashboard = (props) => {
       <Box
         sx={{
           flexGrow: 1,
-          p: 3,
+          p: { xs: 1.5, sm: 3 },
           overflowX: 'hidden',
         }}
       >
@@ -195,8 +195,8 @@ const Dashboard = (props) => {
           <Card
             variant="outlined"
             sx={{
-              maxWidth: 400,
-              minWidth: 200,
+              width: '100%',
+              maxWidth: 420,
               margin: '0 auto',
               borderRadius: '20px',
             }}
@@ -208,7 +208,7 @@ const Dashboard = (props) => {
                 display: 'block',
                 marginLeft: 'auto',
                 marginRight: 'auto',
-                width: '50%',
+                width: { xs: '70%', sm: '50%' },
                 objectFit: 'contain',
               }}
               image="images/no_data.svg"
@@ -229,9 +229,8 @@ const Dashboard = (props) => {
           sx={{
             ...(isPhone && {
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill,minmax(auto,220px))',
-              justifyContent: 'space-evenly',
-              gridColumnGap: '10px',
+              gridTemplateColumns: '1fr',
+              gap: 1.25,
             }),
           }}
         >

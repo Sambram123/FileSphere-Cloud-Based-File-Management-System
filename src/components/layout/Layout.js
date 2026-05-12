@@ -128,7 +128,7 @@ const Layout = () => {
   }, [fetchDataFromFireStore, loading, navigate, setLoader, user]);
 
   return (
-    <Box sx={{ display: 'flex', height: '100vh' }}>
+    <Box sx={{ display: 'flex', minHeight: '100dvh' }}>
       <Header user={user} />
       <SideDrawer
         getNotes={handleGetNotes}
