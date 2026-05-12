@@ -111,7 +111,7 @@ const Reset = () => {
         <LockResetIcon />
       </Avatar>
       <Typography component="h1" variant="h5">
-        Scribbly - Password Reset
+        FileSphere - Password Reset
       </Typography>
       {error && (
         <Alert sx={{ mt: 1, width: 1, padding: '2px 5px' }} severity="error">

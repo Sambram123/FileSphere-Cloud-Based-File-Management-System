@@ -148,7 +148,7 @@ const Header = (props) => {
           }}
         />
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          Scribbly Drive
+          FileSphere Drive
         </Typography>
         {auth && (
           <div>

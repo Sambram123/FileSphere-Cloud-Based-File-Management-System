@@ -153,7 +153,7 @@ const Login = () => {
         <LoginIcon />
       </Avatar>
       <Typography component="h1" variant="h5">
-        Scribbly - Log In
+        FileSphere - Log In
       </Typography>
       {error && (
         <Alert sx={{ mt: 1, width: 1, padding: '2px 5px' }} severity="error">

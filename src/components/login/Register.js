@@ -156,7 +156,7 @@ const Register = () => {
         <LockOutlinedIcon />
       </Avatar>
       <Typography component="h1" variant="h5">
-        Scribbly - Sign Up
+        FileSphere - Sign Up
       </Typography>
       {error && (
         <Alert sx={{ mt: 1, width: 1, padding: '2px 5px' }} severity="error">

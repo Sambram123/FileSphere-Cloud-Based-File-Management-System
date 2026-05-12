@@ -1,0 +1,112 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function isString(x, maxLen) {
+      return x is string && x.size() <= maxLen;
+    }
+
+    function isOptionalString(x, maxLen) {
+      return !(x in request.resource.data) || (x is string && x.size() <= maxLen);
+    }
+
+    function isBoolField(field) {
+      return (field in request.resource.data) && (request.resource.data[field] is bool);
+    }
+
+    function validTimestampField(field) {
+      return (field in request.resource.data) && (request.resource.data[field] is timestamp);
+    }
+
+    function validNoteDoc(uid) {
+      // Enforce that path uid and stored uid match.
+      // Also enforce basic schema + reasonable limits to reduce abuse.
+      return request.resource.data.uid == uid
+        && isString(request.resource.data.title, 200)
+        && isString(request.resource.data.note, 20000)
+        && validTimestampField('date')
+        && validTimestampField('lastEdited')
+        && isBoolField('isNote')
+        && isBoolField('isArchived')
+        && isBoolField('isTrashed')
+        && (
+          // Optional file-note metadata
+          !('isFile' in request.resource.data) || (
+            request.resource.data.isFile is bool
+            && (
+              request.resource.data.isFile == false
+              || (
+                // If isFile === true, require file fields
+                ('fileName' in request.resource.data) && isString(request.resource.data.fileName, 512)
+                && ('fileType' in request.resource.data) && isString(request.resource.data.fileType, 128)
+                && ('fileSize' in request.resource.data) && (request.resource.data.fileSize is int) && (request.resource.data.fileSize >= 0) && (request.resource.data.fileSize <= 250000000)
+                && ('fileUrl' in request.resource.data) && isString(request.resource.data.fileUrl, 2048)
+                && isOptionalString(request.resource.data.cloudinaryPublicId, 512)
+              )
+            )
+          )
+        );
+    }
+
+    // Users collection: documents have random IDs, but include `uid`.
+    // Allow each user to read/write only their own user profile docs.
+    match /users/{docId} {
+      allow read: if signedIn() && resource.data.uid == request.auth.uid;
+
+      allow create: if signedIn()
+        && request.resource.data.uid == request.auth.uid
+        && isString(request.resource.data.name, 120)
+        && isString(request.resource.data.email, 254)
+        && isString(request.resource.data.authProvider, 20);
+
+      // Keep profile docs immutable by default (safer). You can loosen later if needed.
+      allow update, delete: if false;
+    }
+
+    // Primary app data
+    match /userData/{uid}/notes/{noteId} {
+      allow read: if isOwner(uid);
+
+      allow create: if isOwner(uid) && validNoteDoc(uid);
+
+      // Updates: allow partial updates but only to safe fields.
+      // This prevents adding unexpected fields or changing uid ownership.
+      allow update: if isOwner(uid)
+        && request.resource.data.uid == uid
+        && request.resource.data.keys().hasOnly([
+          'title',
+          'note',
+          'uid',
+          'date',
+          'lastEdited',
+          'isNote',
+          'isArchived',
+          'isTrashed',
+          'isFile',
+          'fileName',
+          'fileType',
+          'fileSize',
+          'fileUrl',
+          'cloudinaryPublicId'
+        ])
+        && (
+          // Allow editNote (title/note/lastEdited)
+          (
+            (!('title' in request.resource.data) || isString(request.resource.data.title, 200))
+            && (!('note' in request.resource.data) || isString(request.resource.data.note, 20000))
+            && (!('lastEdited' in request.resource.data) || (request.resource.data.lastEdited is timestamp))
+          )
+        );
+
+      allow delete: if isOwner(uid);
+    }
+  }
+}
+
